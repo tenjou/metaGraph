@@ -1,6 +1,6 @@
 "use strict";
 
-function Graph() 
+var Graph = function() 
 {
 	this.nodes = [];
 	this.indexSearch = 0;
@@ -20,12 +20,12 @@ Graph.prototype =
 		this.nodes.push(node);
 	},
 
-	link: function(fromIndex, toIndex, cost) 
+	link: function(fromID, toID, cost) 
 	{
 		cost = cost || 1;
 
-		var from = this.nodeFromIndex(fromIndex);
-		var to = this.nodeFromIndex(toIndex);
+		var from = this.nodeFromID(fromID);
+		var to = this.nodeFromID(toID);
 
 		from.links.push(new this.Link(from, to, cost));
 		to.links.push(new this.Link(to, from, cost));
@@ -47,7 +47,8 @@ Graph.prototype =
 			this.heuristicFunc = this.Heuristic[heuristic];
 			if(!this.heuristicFunc) {
 				this.heuristicFunc = this.Heuristic.manhattan;
-				console.warn("[Graph.search]:", "Invalid heuristic function passed, falling back to \"manhattan\" heuristic function.");
+				console.warn("[Graph.search]:", 
+					"Invalid heuristic function passed, falling back to \"manhattan\" heuristic function.");
 			}
 		}
 
@@ -96,6 +97,12 @@ Graph.prototype =
 		return null;
 	},
 
+	searchID: function(startID, endID, heuristic) {
+		var startNode = this.nodeFromID(startID);
+		var endNode = this.nodeFromID(endID);
+		return this.search(startNode, endNode, heuristic);
+	},	
+
 	genPath: function(node)
 	{
 		if(!node.parent) { return null; }
@@ -110,21 +117,15 @@ Graph.prototype =
 		return path;
 	},
 
-	searchIndex: function(startIndex, endIndex) {
-		var startNode = this.nodeFromIndex(startIndex);
-		var endNode = this.nodeFromIndex(endIndex);
-		return this.search(startNode, endNode);
-	},
-
 	_sortFunc: function(a, b) { 
 		return a.g - b.g; 
 	},
 
-	nodeFromIndex: function(index)
+	nodeFromID: function(id)
 	{
 		var numNodes = this.nodes.length;
 		for(var i = 0; i < numNodes; i++) {
-			if(this.nodes[i].index === index) {
+			if(this.nodes[i].id === id) {
 				return this.nodes[i];
 			}
 		}
@@ -150,8 +151,8 @@ Graph.prototype =
 	},
 
 	//
-	Node: function(index, x, y, cost) {
-		this.index = index;
+	Node: function(id, x, y, cost) {
+		this.id = id;
 		this.indexSearch = 0;
 		this.x = x;
 		this.y = y;
