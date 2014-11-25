@@ -1,4 +1,4 @@
-meta.graph
+meta.graph v0.1
 ==========
 
-Light and fast algorithm for traversing sparse node graphs or decision trees.
+A fast algorithm for traversing sparse node graphs or decision trees.
